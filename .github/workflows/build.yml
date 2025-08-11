@@ -1,0 +1,30 @@
+name: "build and publish"
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - run: cargo build --release
+      - run: ./target/release/aokami download
+      - run: ./target/release/aokami generate
+      - run: ./target/release/aokami transform registry --registries cat_variant,chicken_variant,cow_variant,frog_variant,painting_variant,pig_variant,wolf_sound_variant,wolf_variant,dimension_type,damage_type,worldgen/biome
+      - run: ./target/release/aokami transform blocks
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: "Automated Release"
+          body: "This release includes transformed data files from latest Minecraft versions, excluding the data files itself."
+          files: |
+            output/transformed/**
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
