@@ -127,9 +127,9 @@ async fn main() -> Result<()> {
             let selected_version_entry = versions.versions.iter().find(|v| {
                 if version == "latest" {
                     if release_type == ReleaseType::Release {
-                        v.version_type == versions.latest.release
+                        v.id == versions.latest.release
                     } else {
-                        v.version_type == versions.latest.snapshot
+                        v.id == versions.latest.snapshot
                     }
                 } else {
                     v.id == version
